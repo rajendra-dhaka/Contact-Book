@@ -1,0 +1,58 @@
+ion-grid {
+  --ion-grid-width: 540px;
+}
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/** Ionic CSS Variables **/
+:root {
+  /** project colors**/
+  --ion-color-primary: #1A120B;
+  --ion-color-secondary: #D5CEA3;
+  --ion-color-tertiary:  #E5E5CB;
+}
+
+.font8 {
+  font-size: 8px;
+}
+
+.font10 {
+  font-size: 10px;
+}
+
+.font11 {
+  font-size: 11px;
+}
+
+.font12 {
+  font-size: 12px;
+}
+
+.font14 {
+  font-size: 14px;
+}
+
+.font16 {
+  font-size: 16px;
+}
+.font25 {
+  font-size: 25px;
+}
+
+.font900 {
+  font-weight: 900;
+}
+
+.font600 {
+  font-weight: 600;
+}
+
+.font500 {
+  font-weight: 500;
+}
+
+.font400 {
+  font-weight: 400;
+}
