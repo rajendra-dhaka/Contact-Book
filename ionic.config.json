@@ -1,0 +1,7 @@
+{
+  "name": "Contact-list",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
