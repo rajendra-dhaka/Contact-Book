@@ -14,10 +14,14 @@ import {
 } from '@ionic/react';
 import { businessOutline, callOutline, logoWhatsapp, mailOutline, phonePortraitOutline } from 'ionicons/icons';
 import React from 'react';
+import { useParams } from 'react-router';
 import { Header } from '../../components';
 
 
 const View: React.FC = () => {
+  const { id }: any = useParams();
+  console.log(id,'id h ye')
+
   return (
     <IonPage>
       <Header backbutton={true} />
