@@ -14,7 +14,7 @@ export const ContactItem = () => {
   return (
     <IonAccordionGroup>
       {/* Accordion Start */}
-      {filteredContactData.length > 0 ? (
+      {(filteredContactData && filteredContactData.length > 0) ? (
         filteredContactData.map((person) => (
           <IonAccordion value={person.id} key={person.id}>
             <IonItem slot='header' color='light'>
