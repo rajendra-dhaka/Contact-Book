@@ -3,7 +3,7 @@ import React from "react";
 import { Form, Header } from "../../components";
 
 
-const Upsert: React.FC = () => {
+const Upsert = () => {
   return <IonPage>
     <Header backbutton={true} />
     <IonContent>

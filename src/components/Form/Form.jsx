@@ -1,4 +1,5 @@
 import {
+  IonAvatar,
   IonButton,
   IonCard,
   IonCardContent,
@@ -13,7 +14,7 @@ import {
   IonSelectOption,
   IonSpinner,
 } from '@ionic/react';
-import { addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { imageOutline, personCircleOutline } from 'ionicons/icons';
 import { useEffect, useState } from 'react';
@@ -21,110 +22,119 @@ import { useHistory, useParams } from 'react-router';
 import { storage, db } from '../../firebase';
 import './Form.scss';
 
-interface ContainerProps {}
-const initialState:any = {
-  // name: '',
-  // phone: '',
-  // email: '',
-  // type: '',
-  // whatsapp: false,
+
+const initialState = {
+  name: '',
+  phone: '',
+  email: '',
+  type: '',
+  whatsapp: false,
 };
 
-export const Form: React.FC<ContainerProps> = () => {
-
+export const Form = () => {
   const [isSubmit, setIsSubmit] = useState(false);
-  const [contactData, setContactData] = useState(initialState);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [file, setFile] = useState<any>({});
-
+  const [ personData, setPersonData ] = useState(initialState);
   const history = useHistory();
-  const { id }: any = useParams();
-  useEffect(() => {
-    // Uplaod File Function starts
-    const uploadFile = () => {
-      let name = new Date() + file.name;
-      console.log(name);
-      const storageRef = ref(storage, `profile-images/${name}`);
-      const uploadTask:any = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        // Argument 1
-        'state_changed',
-        // Argument 2
-        (snapshot: any) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress);
-          switch (snapshot.state) {
-            case 'paused':
-              console.log('Upload is paused');
-              break;
-            case 'running':
-              console.log('Upload is Running');
-              break;
-            default:
-              break;
-          }
-        },
-        // Argument 3
-        (error: any) => { console.log(error) },
-        // Argument 4
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
-            setContactData((prev:any)=>({...prev,img:downloadUrl}))
-          })
-        }
-        )
-    };
-      // Uplaod File Function Ends
-    file && uploadFile();
- 
-  }, [file]);
-
+  const { id } = useParams();
 
   useEffect(() => {
     id && getSingleUser();
   }, [id]);
 
+
   const getSingleUser = async () => {
     const docRef = doc(db, 'people', id);
     const snapshot = await getDoc(docRef);
     if (snapshot.exists()) {
-      setContactData({ ...snapshot.data() });
+      setPersonData({ ...snapshot.data() });
     }
-  }
-
-  const onInputChange = (e: any) => {
-    setContactData((prev:any)=>({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleUpsert = async (e: any) => {
-    e.preventDefault();
-    setIsSubmit(true);
-    if (!id) { 
-      try {
-        const response = await addDoc(collection(db, 'people'), {
-          ...contactData,
+  const FileUploadHandler = (file) => {
+
+    let name = new Date() + file.name;
+    const storageRef = ref(storage, `profile-images/${name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      // Argument 1
+      'state_changed',
+      // Argument 2
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        if (progress < 100) {
+          setIsSubmit(true)
+        } else {
+          setIsSubmit(false);
+        }
+        switch (snapshot.state) {
+          case 'paused':
+            console.log('Upload is paused');
+            break;
+          case 'running':
+            console.log('Upload is Running');
+            break;
+          default:
+            break;
+        }
+      },
+      // Argument 3
+      (error) => {
+        console.log(error);
+      },
+      // Argument 4
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
+          setPersonData((prev) => ({ ...prev, img: downloadUrl }));
         });
       }
-      catch {
-        (error: any) => console.log(error)
-           }
+    );
+  };
+    // Uplaod File Function Ends
+ 
+
+  const onInputChange = (e) => {
+    setPersonData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleUpsert = async (e) => {
+    e.preventDefault();
+    setIsSubmit(true);
+    if (!id) {
+    try {  await addDoc(collection(db, 'people'), {
+        ...personData,
+    });
+    } catch(error){
+     console.log(error);
+      }
+    } else {
+       try {
+         await updateDoc(doc(db, 'people',id), {
+           ...personData,
+         });
+       } catch (error) {
+           console.log(error);
+       }
     }
-  }
     setIsSubmit(true);
     history.replace('/');
-};
+  };
 
   return (
     <IonCard>
       <IonCardHeader>
         <IonCardTitle className='ion-text-center ion-margin-top'>
-          <div>{id ?'Update':'Add'} Person </div>
+          <div>{id ? 'Update' : 'Add'} Person </div>
           <IonIcon icon={personCircleOutline}></IonIcon>
         </IonCardTitle>
       </IonCardHeader>
       <IonCardContent>
         <form onSubmit={handleUpsert}>
+          <IonItem>
+            <IonAvatar className='ion-margin'>
+              <img alt='person' src={personData?.img} />
+            </IonAvatar>
+          </IonItem>
           <IonItem>
             <IonLabel position='floating' className='ion-capitalize'>
               Name
@@ -132,7 +142,7 @@ export const Form: React.FC<ContainerProps> = () => {
             <IonInput
               clearInput={true}
               name='name'
-              value={contactData.name}
+              value={personData.name}
               type='text'
               required={true}
               onIonChange={onInputChange}></IonInput>
@@ -145,7 +155,7 @@ export const Form: React.FC<ContainerProps> = () => {
               clearInput={true}
               type='number'
               name='phone'
-              value={contactData.phone}
+              value={personData.phone}
               required={true}
               onIonChange={onInputChange}></IonInput>
           </IonItem>
@@ -157,14 +167,14 @@ export const Form: React.FC<ContainerProps> = () => {
               clearInput={true}
               name='email'
               type='email'
-              value={contactData.email}
+              value={personData.email}
               onIonChange={onInputChange}></IonInput>
           </IonItem>
           <IonItem>
             <IonSelect
               interface='popover'
               name='type'
-              value={contactData.type}
+              value={personData.type}
               placeholder='Select Type'
               onIonChange={onInputChange}>
               <IonSelectOption value='Office'>Office</IonSelectOption>
@@ -175,23 +185,24 @@ export const Form: React.FC<ContainerProps> = () => {
             <IonCheckbox
               slot='end'
               name='whatsapp'
-              checked={contactData.whatsapp}
+              // value={personData.whatsapp}
+              checked={personData.whatsapp}
               onIonChange={onInputChange}></IonCheckbox>
             <IonLabel>Whatsapp</IonLabel>
           </IonItem>
           <IonItem>
             <IonIcon icon={imageOutline}></IonIcon>
             <span className='ion-margin-start'>
-              <input type='file' name='file' accept='image/*' onChange={(e: any) => setFile(e.target.files[0])} />
+              <input type='file' name='file' accept='image/*' onChange={(e) => FileUploadHandler(e.target.files[0])} />
             </span>
           </IonItem>
 
           <div className='ion-margin-top ion-text-center'>
-            {uploadProgress<100 ? (
+            { isSubmit ? (
               <IonSpinner name='crescent' color='secondary'></IonSpinner>
             ) : (
               <IonButton type='submit' color='primary'>
-                {id?'UPDATE':'ADD'}
+                {id ? 'UPDATE' : 'ADD'}
               </IonButton>
             )}
           </div>

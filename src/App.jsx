@@ -23,26 +23,29 @@ import '@ionic/react/css/display.css';
 import './global.scss';
 import View from './pages/View/View';
 import Upsert from './pages/Upsert/Upsert';
+import { DataContextProvider } from './Context/DataContext';
 
 setupIonicReact();
 
-const App: React.FC = () => (
+const App = () => (
   <IonApp>
     <IonReactRouter>
-      <IonRouterOutlet>
-        <Route exact path="/">
-          <Home />
-        </Route>
-        {/* <Route exact path="/">
+      <DataContextProvider>
+        <IonRouterOutlet>
+          <Route exact path='/'>
+            <Home />
+          </Route>
+          {/* <Route exact path="/">
           <Redirect to="/home" />
         </Route> */}
-        <Route path="/view/:id">
-          <View/>
-        </Route>
-        <Route path="/upsert/:id?">
-          <Upsert/>
-        </Route>
-      </IonRouterOutlet>
+          <Route path='/view/:id'>
+            <View />
+          </Route>
+          <Route path='/upsert/:id?'>
+            <Upsert />
+          </Route>
+        </IonRouterOutlet>
+      </DataContextProvider>
     </IonReactRouter>
   </IonApp>
 );

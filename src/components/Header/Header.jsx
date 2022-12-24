@@ -2,9 +2,9 @@ import { IonHeader, IonToolbar, IonGrid, IonRow, IonTitle, IonIcon, IonBackButto
 import { call, chevronBack } from 'ionicons/icons';
 import './Header.scss';
 
-interface ContainerProps {backbutton?: boolean }
 
-export const Header: React.FC<ContainerProps> = ({backbutton}) => {
+
+export const Header = ({backbutton}) => {
   return (
     <IonHeader>
       <IonToolbar color='secondary'>
