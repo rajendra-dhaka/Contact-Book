@@ -10,12 +10,13 @@ import './ContactItem.scss';
 export const ContactItem = () => {
 
   const { filteredContactData, removeContact } = useContactData();
-  
   return (
     <IonAccordionGroup>
       {/* Accordion Start */}
-      {(filteredContactData && filteredContactData.length > 0) ? (
-        filteredContactData.map((person) => (
+      {filteredContactData && filteredContactData.length > 0 ? (
+        filteredContactData.map((person) => {
+          let whatsappurl = `https://api.whatsapp.com/send?phone=91${person.phone}`;
+          return(
           <IonAccordion value={person.id} key={person.id}>
             <IonItem slot='header' color='light'>
               <IonAvatar className='ion-margin'>
@@ -24,7 +25,9 @@ export const ContactItem = () => {
               <IonLabel>{person.name}</IonLabel>
             </IonItem>
             <div className='ion-padding cta' slot='content'>
-              <IonIcon icon={logoWhatsapp}></IonIcon>
+             { person.whatsapp ? (<a href={whatsappurl} target='_blank'>
+                <IonIcon icon={logoWhatsapp}></IonIcon>
+              </a>):''}
               <Link to={`view/${person.id}`}>
                 <IonIcon icon={eyeOutline}></IonIcon>
               </Link>
@@ -34,9 +37,9 @@ export const ContactItem = () => {
               <IonIcon icon={trashOutline} onClick={() => removeContact(person.id)}></IonIcon>
             </div>
           </IonAccordion>
-        ))
+        )})
       ) : (
-        <LoaderSpin/>
+        <LoaderSpin />
       )}
       {/* Accordion Ends here */}
     </IonAccordionGroup>

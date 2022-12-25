@@ -93,8 +93,9 @@ export const Form = () => {
     // Uplaod File Function Ends
  
 
+
   const onInputChange = (e) => {
-    setPersonData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+      setPersonData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleUpsert = async (e) => {
@@ -185,9 +186,8 @@ export const Form = () => {
             <IonCheckbox
               slot='end'
               name='whatsapp'
-              // value={personData.whatsapp}
               checked={personData.whatsapp}
-              onIonChange={onInputChange}></IonCheckbox>
+              onIonChange={(e) => setPersonData((prev) => ({ ...prev, whatsapp: e.target.checked }))}></IonCheckbox>
             <IonLabel>Whatsapp</IonLabel>
           </IonItem>
           <IonItem>
@@ -198,7 +198,7 @@ export const Form = () => {
           </IonItem>
 
           <div className='ion-margin-top ion-text-center'>
-            { isSubmit ? (
+            {isSubmit ? (
               <IonSpinner name='crescent' color='secondary'></IonSpinner>
             ) : (
               <IonButton type='submit' color='primary'>

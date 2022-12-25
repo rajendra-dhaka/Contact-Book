@@ -10,7 +10,6 @@ const Home = () => {
 
   const handlePersonSearch = (text) => {
     text = text.trim();
-    console.log(text.length,'lnt');
     if (text.length > 0){
       const Searchresult = [...filteredContactData].filter((personData) => {
         return personData.name.toLowerCase().includes(text.toLowerCase())
