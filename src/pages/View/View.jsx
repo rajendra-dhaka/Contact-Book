@@ -24,7 +24,6 @@ const View = () => {
   const filteredContactData = contactData.filter((data) => {
     return data.id === id;
   });
-
   return (
     <IonPage>
       <Header backbutton={true} />
@@ -60,7 +59,7 @@ const View = () => {
                     <IonItem>
                       <IonText>
                         <IonIcon icon={logoWhatsapp} className='ion-margin-end'></IonIcon>{' '}
-                        {filteredContactData[0].whatsapp}
+                        {filteredContactData[0].whatsapp?'Available':'Not Available'}
                       </IonText>
                     </IonItem>
                   </IonCardContent>

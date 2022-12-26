@@ -29,6 +29,7 @@ const initialState = {
   email: '',
   type: '',
   whatsapp: false,
+  img: 'https://ionicframework.com/docs/img/demos/avatar.svg',
 };
 
 export const Form = () => {
@@ -120,7 +121,6 @@ export const Form = () => {
     setIsSubmit(true);
     history.replace('/');
   };
-
   return (
     <IonCard>
       <IonCardHeader>
@@ -133,7 +133,10 @@ export const Form = () => {
         <form onSubmit={handleUpsert}>
           <IonItem>
             <IonAvatar className='ion-margin'>
-              <img alt='person' src={personData?.img} />
+              <img
+                alt='person'
+                src={personData?.img}
+              />
             </IonAvatar>
           </IonItem>
           <IonItem>
